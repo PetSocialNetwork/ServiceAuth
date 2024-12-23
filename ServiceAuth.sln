@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceAuth.WebApi", "Presentation\ServiceAuth.WebApi\ServiceAuth.WebApi.csproj", "{111D5B84-3831-42E2-82AE-505B99693048}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5381CC7B-217A-432F-82C5-AA6B1AC9C7FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{AA02683E-53AB-48FC-885C-1BD28F896C97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAuth.Domain", "ServiceAuth.Domain\ServiceAuth.Domain.csproj", "{1F8592D5-5521-406A-8F30-352B60466ECA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAuth.DataEntityFramework", "Infrastructure\ServiceAuth.DataEntityFramework\ServiceAuth.DataEntityFramework.csproj", "{A43C0637-A56C-4C83-A42E-A83279A70918}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAuth.IdentityPasswordHasherLib", "Infrastructure\ServiceAuth.IdentityPasswordHasherLib\ServiceAuth.IdentityPasswordHasherLib.csproj", "{0491AFBC-0475-45EF-ACAE-3D7D799415D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAuth.NswagClients", "Infrastructure\ServiceAuth.NswagClients\ServiceAuth.NswagClients.csproj", "{B44880AB-A726-46B7-89E9-F86C8BFA04F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{111D5B84-3831-42E2-82AE-505B99693048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{111D5B84-3831-42E2-82AE-505B99693048}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{111D5B84-3831-42E2-82AE-505B99693048}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{111D5B84-3831-42E2-82AE-505B99693048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F8592D5-5521-406A-8F30-352B60466ECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F8592D5-5521-406A-8F30-352B60466ECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F8592D5-5521-406A-8F30-352B60466ECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F8592D5-5521-406A-8F30-352B60466ECA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43C0637-A56C-4C83-A42E-A83279A70918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43C0637-A56C-4C83-A42E-A83279A70918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43C0637-A56C-4C83-A42E-A83279A70918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43C0637-A56C-4C83-A42E-A83279A70918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0491AFBC-0475-45EF-ACAE-3D7D799415D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0491AFBC-0475-45EF-ACAE-3D7D799415D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0491AFBC-0475-45EF-ACAE-3D7D799415D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0491AFBC-0475-45EF-ACAE-3D7D799415D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B44880AB-A726-46B7-89E9-F86C8BFA04F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B44880AB-A726-46B7-89E9-F86C8BFA04F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B44880AB-A726-46B7-89E9-F86C8BFA04F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B44880AB-A726-46B7-89E9-F86C8BFA04F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{111D5B84-3831-42E2-82AE-505B99693048} = {5381CC7B-217A-432F-82C5-AA6B1AC9C7FA}
+		{A43C0637-A56C-4C83-A42E-A83279A70918} = {AA02683E-53AB-48FC-885C-1BD28F896C97}
+		{0491AFBC-0475-45EF-ACAE-3D7D799415D8} = {AA02683E-53AB-48FC-885C-1BD28F896C97}
+		{B44880AB-A726-46B7-89E9-F86C8BFA04F7} = {AA02683E-53AB-48FC-885C-1BD28F896C97}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79C7693B-8B6C-4D85-9116-656DA156DE03}
+	EndGlobalSection
+EndGlobal
