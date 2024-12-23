@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using ServiceAuth.Domain.Exceptions;
+using System.Text.RegularExpressions;
 namespace Service_Auth.Entities
 {
     public class Email
@@ -11,7 +12,7 @@ namespace Service_Auth.Entities
 
             if (!IsEmail(value))
             {
-                throw new InvalidOperationException();
+                throw new InvalidEmailException("Некорректный e-mail адрес");
             }
             Value = value;
         }

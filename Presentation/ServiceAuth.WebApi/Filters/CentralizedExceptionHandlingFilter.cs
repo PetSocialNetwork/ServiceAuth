@@ -29,7 +29,7 @@ namespace ServiceAuth.WebApi.Filters
                 PasswordNotChangedException => ("Новый пароль не должен совпадать со старым.", StatusCodes.Status400BadRequest),
                 AccountNotFoundException => ("Аккаунт с таким e-mail не найден.", StatusCodes.Status400BadRequest),
                 InvalidPasswordException => ("Неверный пароль.", StatusCodes.Status400BadRequest),
-                InvalidOperationException => ("Некорректный адрес e-mail адреса.", StatusCodes.Status400BadRequest),
+                InvalidEmailException => ("Некорректный адрес e-mail адреса.", StatusCodes.Status400BadRequest),
                 Exception => ("Неизвестная ошибка!", StatusCodes.Status500InternalServerError),
                 _ => (null, 0)
             };
