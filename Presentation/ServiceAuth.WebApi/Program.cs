@@ -31,7 +31,6 @@ namespace ServiceAuth.WebApi
             builder.Services.AddSingleton(jwtConfig);
 
             builder.Services.AddCors();
-            builder.Services.AddControllers();
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add<CentralizedExceptionHandlingFilter>();

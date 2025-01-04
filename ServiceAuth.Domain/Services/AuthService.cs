@@ -96,7 +96,7 @@ namespace ServiceAuth.Domain.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(oldPassword);
             ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
 
-            if (_passwordHasher.HashPassword(oldPassword) == _passwordHasher.HashPassword(newPassword))
+            if (oldPassword == newPassword)
             {
                 throw new PasswordNotChangedException("Новый пароль не должен совпадать со старым.");
             }
@@ -114,22 +114,34 @@ namespace ServiceAuth.Domain.Services
 
             if (!isPasswordValid)
             {
-                throw new InvalidPasswordException("Неверный пароль.");
+                throw new InvalidPasswordException("Старый пароль указан неверно.");
             }
 
             existedAccount.HashedPassword = _passwordHasher.HashPassword(newPassword);
             await _accountRepository.Update(existedAccount, cancellationToken);
         }
 
-        public async Task ResetPasswordAsync(Guid id, string newPassword, CancellationToken cancellationToken)
+        public async Task ResetPasswordAsync(string email, string newPassword, CancellationToken cancellationToken)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
 
-            var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken);
+            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+
             if (existedAccount is null)
             {
                 throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
             }
+
+            var isPasswordValid =
+                _passwordHasher.VerifyHashedPassword
+                (existedAccount.HashedPassword, newPassword, out bool rehash);
+
+            if (isPasswordValid)
+            {
+                throw new PasswordNotChangedException("Новый пароль не должен совпадать со старым.");
+            }
+
             existedAccount.HashedPassword = _passwordHasher.HashPassword(newPassword);
             await _accountRepository.Update(existedAccount, cancellationToken);
         }

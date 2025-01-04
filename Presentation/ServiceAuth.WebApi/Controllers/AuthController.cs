@@ -77,7 +77,7 @@ namespace ServiceAuth.WebApi.Controllers
         [HttpPut("[action]")]
         public async Task ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
         {
-            await _authService.ResetPasswordAsync(request.AccountId, request.NewPassword, cancellationToken);
+            await _authService.ResetPasswordAsync(request.Email, request.NewPassword, cancellationToken);
         }
     }
 }
