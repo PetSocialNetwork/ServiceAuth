@@ -11,11 +11,13 @@ namespace ServiceAuth.Domain.Services
         private readonly IApplicationPasswordHasher _passwordHasher;
         private readonly IUserProfileService _userProfileService;
         private readonly INotificationService _notificationService;
+        private readonly IPetProfileService _petProfileService;
 
         public AuthService
             (IAccountRepository accountRepository,
             IUserProfileService userProfileService,
-            INotificationService notificationApiClient,
+            INotificationService notificationService,
+            IPetProfileService petProfileService,
             IApplicationPasswordHasher passwordHasher)
         {
             _accountRepository = accountRepository
@@ -24,9 +26,10 @@ namespace ServiceAuth.Domain.Services
                  ?? throw new ArgumentNullException(nameof(passwordHasher));
             _userProfileService = userProfileService
                 ?? throw new ArgumentNullException(nameof(userProfileService));
-            _notificationService = notificationApiClient
-                ?? throw new ArgumentNullException(nameof(notificationApiClient));
-            ;
+            _notificationService = notificationService
+                ?? throw new ArgumentNullException(nameof(notificationService));
+            _petProfileService = petProfileService
+                ?? throw new ArgumentNullException(nameof(petProfileService));
         }
 
         public async Task<Account> Register
@@ -44,8 +47,7 @@ namespace ServiceAuth.Domain.Services
             var account = new Account(Guid.NewGuid(), new Email(email), EncryptPassword(password));
             await _accountRepository.Add(account, cancellationToken);
 
-            var userResponse = await _userProfileService.AddUserProfileAsync(account.Id, cancellationToken);
-            //TODO: отправляем запрос на добавление профиля животного и передаем туда userProfileId
+            await _userProfileService.AddUserProfileAsync(account.Id, cancellationToken);
             await _notificationService.SendEmailAsync(email, cancellationToken);
 
             //await transaction.CommitAsync(cancellationToken);
@@ -83,12 +85,16 @@ namespace ServiceAuth.Domain.Services
 
         public async Task DeleteAccountAsync(Guid id, CancellationToken cancellationToken)
         {
+            //Транзакция
             var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken);
             if (existedAccount is null)
             {
                 throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
             }
             await _accountRepository.Delete(existedAccount, cancellationToken);
+
+            await _userProfileService.DeleteUserProfileAsync(id, cancellationToken);
+            await _petProfileService.DeletePetProfilesAsync(id, cancellationToken);           
         }
 
         public async Task UpdatePasswordAsync(Guid id, string oldPassword, string newPassword, CancellationToken cancellationToken)

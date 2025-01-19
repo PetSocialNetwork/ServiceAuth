@@ -1,4 +1,5 @@
 ﻿using PetSocialNetwork.ServiceNotification;
+using PetSocialNetwork.ServicePet;
 using PetSocialNetwork.ServiceUser;
 
 namespace ServiceAuth.WebApi.Extensions
@@ -9,6 +10,7 @@ namespace ServiceAuth.WebApi.Extensions
         {
             services.AddServiceClient<INotificationApiClient, NotificationApiClient>("NotificationService");
             services.AddServiceClient<IUserProfileApiClient, UserProfileApiClient>("UserService");
+            services.AddServiceClient<IPetProfileClient, PetProfileClient>("PetService");
 
             return services;
         }

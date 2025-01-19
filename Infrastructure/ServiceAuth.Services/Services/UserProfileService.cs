@@ -3,10 +3,8 @@ using ServiceAuth.Domain.Interfaces;
 
 namespace ServiceAuth.NswagClients.Services
 {
-
     public class UserProfileService : IUserProfileService
     {
-
         private readonly IUserProfileApiClient _userProfileClient;
 
         public UserProfileService(IUserProfileApiClient userProfileClient)
@@ -19,7 +17,10 @@ namespace ServiceAuth.NswagClients.Services
             var response = await _userProfileClient.AddUserProfileAsync(new AddUserProfileRequest() { AccountId = accountId }, cancellationToken);
             return response.Id;
         }
+
+        public async Task DeleteUserProfileAsync(Guid accountId, CancellationToken cancellationToken)
+        {
+            await _userProfileClient.DeleteUserProfileAsync(accountId, cancellationToken);
+        }
     }
-
-
 }

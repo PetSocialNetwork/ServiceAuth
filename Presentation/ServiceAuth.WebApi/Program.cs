@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ServiceAuth.DataEntityFramework;
 using ServiceAuth.DataEntityFramework.Repositories;
@@ -20,7 +18,6 @@ namespace ServiceAuth.WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             JwtConfig? jwtConfig = builder.Configuration
                .GetRequiredSection("JwtConfig")
                .Get<JwtConfig>();
@@ -41,20 +38,13 @@ namespace ServiceAuth.WebApi
             builder.Services.AddClientServices();
             builder.Services.AddHttpClient();
 
-            //builder.Services.AddSwaggerGen(options =>
-            //{
-            //    options.SwaggerDoc("v1.0", new OpenApiInfo
-            //    {
-            //        Title = "Service Notification",
-            //        Description = $"Версия сборки:",
-            //        Version = "v1.0"
-            //    });
-
-            //    options.UseAllOfToExtendReferenceSchemas();
-
-            //    string pathToXmlDocs = Path.Combine(AppContext.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".xml");
-            //    options.IncludeXmlComments(pathToXmlDocs, true);
-            //});
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "AuthService", Version = "v1" });     
+                //options.UseAllOfToExtendReferenceSchemas();
+                //string pathToXmlDocs = Path.Combine(AppContext.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".xml");
+                //options.IncludeXmlComments(pathToXmlDocs, true);
+            });
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
@@ -66,29 +56,8 @@ namespace ServiceAuth.WebApi
             builder.Services.AddScoped<IApplicationPasswordHasher, IdentityPasswordHasher>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-             .AddJwtBearer(options =>
-             {
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     IssuerSigningKey = new SymmetricSecurityKey(jwtConfig.SigningKeyBytes),
-                     ValidateIssuerSigningKey = true,
-                     ValidateLifetime = true,
-                     RequireExpirationTime = true,
-                     RequireSignedTokens = true,
-                     ValidateAudience = true,
-                     ValidateIssuer = true,
-                     ValidAudiences = new[] { jwtConfig.Audience },
-                     ValidIssuer = jwtConfig.Issuer
-                 };
-             });
-
+            builder.Services.AddScoped<IPetProfileService, PetProfileService>();
+          
             var app = builder.Build();
 
             app.UseCors(policy =>
@@ -107,7 +76,6 @@ namespace ServiceAuth.WebApi
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ServiceAuth.Domain.Services;
 using ServiceAuth.WebApi.Models.Requests;
 using ServiceAuth.WebApi.Models.Responses;
@@ -52,10 +51,7 @@ namespace ServiceAuth.WebApi.Controllers
         [HttpDelete("[action]")]
         public async Task DeleteAccount([FromQuery] Guid id, CancellationToken cancellationToken)
         {
-            //Транзакция
             await _authService.DeleteAccountAsync(id, cancellationToken);
-            //await _userProfileClient.DeleteUserProfileByAccountIdAsync(id, cancellationToken);
-            //TODO: отправляем запрос на удаление профиля животного и передаем туда userProfileId
         }
 
         //[ProducesResponseType(StatusCodes.Status200OK)]

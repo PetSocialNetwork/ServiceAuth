@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
   </ItemGroup>
@@ -19,6 +17,7 @@
     <ProjectReference Include="..\..\Infrastructure\ServiceAuth.DataEntityFramework\ServiceAuth.DataEntityFramework.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ServiceAuth.IdentityPasswordHasherLib\ServiceAuth.IdentityPasswordHasherLib.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ServiceAuth.NswagClients\ServiceAuth.NswagClients.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ServiceAuth.Services\ServiceAuth.Services.csproj" />
     <ProjectReference Include="..\..\ServiceAuth.Domain\ServiceAuth.Domain.csproj" />
   </ItemGroup>
 
