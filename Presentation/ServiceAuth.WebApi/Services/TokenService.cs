@@ -36,7 +36,8 @@ namespace ServiceAuth.WebApi.Services
         {
             var claimsIdentity = new ClaimsIdentity(new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString(), account.Email.Value)
+            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+            new Claim(ClaimTypes.Email, account.Email.Value)
         });
             return claimsIdentity;
         }
