@@ -18,7 +18,15 @@ namespace ServiceAuth.DataEntityFramework.Repositories
             return await Entities.SingleOrDefaultAsync(it => it.Id == id, cancellationToken);
         }
 
+        public async Task<bool> IsRegisterUserAsync(string email, CancellationToken cancellationToken)
+        {
+            var user = await Entities.FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+            if(user is not null)
+            { 
+                return true;
+            }
 
-
+            return false;
+        }
     }
 }

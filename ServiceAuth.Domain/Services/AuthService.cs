@@ -46,10 +46,10 @@ namespace ServiceAuth.Domain.Services
             }
             var account = new Account(Guid.NewGuid(), new Email(email), EncryptPassword(password));
             await _accountRepository.Add(account, cancellationToken);
-
-            await _userProfileService.AddUserProfileAsync(account.Id, cancellationToken);
-            await _notificationService.SendEmailAsync(email, cancellationToken);
-
+       
+            var adduserProfileTask = _userProfileService.AddUserProfileAsync(account.Id, cancellationToken);
+            var sendNotificationTask = _notificationService.SendEmailAsync(email, cancellationToken);
+            await Task.WhenAll(adduserProfileTask, sendNotificationTask);
             //await transaction.CommitAsync(cancellationToken);
             //TODO: добавить в claims дополнительные данные
             return account;
@@ -150,6 +150,12 @@ namespace ServiceAuth.Domain.Services
 
             existedAccount.HashedPassword = _passwordHasher.HashPassword(newPassword);
             await _accountRepository.Update(existedAccount, cancellationToken);
+        }
+
+        public async Task<bool> IsRegisterUserAsync(string email, CancellationToken cancellationToken)
+        { 
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+            return await _accountRepository.IsRegisterUserAsync(email, cancellationToken);
         }
 
         private async Task RehashPassword(string password, Account account, CancellationToken cancellationToken)
