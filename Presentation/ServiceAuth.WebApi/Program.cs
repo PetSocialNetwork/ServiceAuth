@@ -7,7 +7,6 @@ using ServiceAuth.Domain.Services;
 using ServiceAuth.IdentityPasswordHasherLib;
 using ServiceAuth.NswagClients.Services;
 using ServiceAuth.WebApi.Configurations;
-using ServiceAuth.WebApi.Extensions;
 using ServiceAuth.WebApi.Filters;
 using ServiceAuth.WebApi.Services;
 
@@ -35,7 +34,6 @@ namespace ServiceAuth.WebApi
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddClientServices();
             builder.Services.AddHttpClient();
 
             builder.Services.AddSwaggerGen(options =>
@@ -54,10 +52,7 @@ namespace ServiceAuth.WebApi
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<IApplicationPasswordHasher, IdentityPasswordHasher>();
-            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
-            builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<IPetProfileService, PetProfileService>();
-          
+            
             var app = builder.Build();
 
             app.UseCors(policy =>

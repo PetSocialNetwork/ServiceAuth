@@ -9,27 +9,15 @@ namespace ServiceAuth.Domain.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IApplicationPasswordHasher _passwordHasher;
-        private readonly IUserProfileService _userProfileService;
-        private readonly INotificationService _notificationService;
-        private readonly IPetProfileService _petProfileService;
 
         public AuthService
             (IAccountRepository accountRepository,
-            IUserProfileService userProfileService,
-            INotificationService notificationService,
-            IPetProfileService petProfileService,
             IApplicationPasswordHasher passwordHasher)
         {
             _accountRepository = accountRepository
                 ?? throw new ArgumentNullException(nameof(accountRepository));
             _passwordHasher = passwordHasher
                  ?? throw new ArgumentNullException(nameof(passwordHasher));
-            _userProfileService = userProfileService
-                ?? throw new ArgumentNullException(nameof(userProfileService));
-            _notificationService = notificationService
-                ?? throw new ArgumentNullException(nameof(notificationService));
-            _petProfileService = petProfileService
-                ?? throw new ArgumentNullException(nameof(petProfileService));
         }
 
         public async Task<Account> Register
@@ -45,12 +33,8 @@ namespace ServiceAuth.Domain.Services
                 throw new EmailAlreadyExistsException("Aккаунт с таким email уже существует.");
             }
             var account = new Account(Guid.NewGuid(), new Email(email), EncryptPassword(password));
-            await _accountRepository.Add(account, cancellationToken);
-       
-            var adduserProfileTask = _userProfileService.AddUserProfileAsync(account.Id, cancellationToken);
-            var sendNotificationTask = _notificationService.SendEmailAsync(email, cancellationToken);
-            await Task.WhenAll(adduserProfileTask, sendNotificationTask);
-            //await transaction.CommitAsync(cancellationToken);
+            await _accountRepository.Add(account, cancellationToken);        
+            
             //TODO: добавить в claims дополнительные данные
             return account;
         }
@@ -91,10 +75,7 @@ namespace ServiceAuth.Domain.Services
             {
                 throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
             }
-            await _accountRepository.Delete(existedAccount, cancellationToken);
-
-            await _userProfileService.DeleteUserProfileAsync(id, cancellationToken);
-            await _petProfileService.DeletePetProfilesAsync(id, cancellationToken);           
+            await _accountRepository.Delete(existedAccount, cancellationToken);         
         }
 
         public async Task UpdatePasswordAsync(Guid id, string oldPassword, string newPassword, CancellationToken cancellationToken)
