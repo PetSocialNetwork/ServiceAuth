@@ -5,7 +5,6 @@ using ServiceAuth.DataEntityFramework.Repositories;
 using ServiceAuth.Domain.Interfaces;
 using ServiceAuth.Domain.Services;
 using ServiceAuth.IdentityPasswordHasherLib;
-using ServiceAuth.NswagClients.Services;
 using ServiceAuth.WebApi.Configurations;
 using ServiceAuth.WebApi.Filters;
 using ServiceAuth.WebApi.Services;

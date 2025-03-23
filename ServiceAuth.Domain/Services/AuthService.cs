@@ -139,6 +139,36 @@ namespace ServiceAuth.Domain.Services
             return await _accountRepository.IsRegisterUserAsync(email, cancellationToken);
         }
 
+        public async Task<bool> IsTheSameUserPasswordAsync(string email, string newPassword, CancellationToken cancellationToken)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+
+            var isPasswordValid = await IsTheSamePassword(email, newPassword, cancellationToken);
+
+            if (isPasswordValid)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> IsTheSamePassword(string email, string newPassword, CancellationToken cancellationToken)
+        {
+            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+
+            if (existedAccount is null)
+            {
+                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
+            }
+
+            var isPasswordValid =
+                _passwordHasher.VerifyHashedPassword
+                (existedAccount.HashedPassword, newPassword, out bool rehash);
+            return isPasswordValid;
+        }
+
         private async Task RehashPassword(string password, Account account, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(nameof(account));

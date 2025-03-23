@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
+﻿#pragma warning disable CS8618 
 using System.ComponentModel.DataAnnotations;
 
 namespace ServiceAuth.WebApi.Models.Requests

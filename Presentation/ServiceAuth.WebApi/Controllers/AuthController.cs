@@ -20,9 +20,6 @@ namespace ServiceAuth.WebApi.Controllers
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InvalidOperationException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("[action]")]
         public async Task<ActionResult<RegisterResponse>> Register
             ([FromBody] RegisterRequest request, CancellationToken cancellationToken)
@@ -33,10 +30,6 @@ namespace ServiceAuth.WebApi.Controllers
             return Ok(new RegisterResponse(account.Id, account.Email.ToString()));
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InvalidPasswordException))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AccountNotFoundException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("[action]")]
         public async Task<ActionResult<LoginResponse>> LoginByPassword([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
@@ -45,20 +38,12 @@ namespace ServiceAuth.WebApi.Controllers
             return Ok(new LoginResponse(account.Id, account.Email.ToString(), token));
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AccountNotFoundException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete("[action]")]
         public async Task DeleteAccount([FromQuery] Guid id, CancellationToken cancellationToken)
         {
             await _authService.DeleteAccountAsync(id, cancellationToken);
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(PasswordNotChangedException))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AccountNotFoundException))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InvalidPasswordException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("[action]")]
         public async Task UpdatePassword([FromBody] UpdatePasswordRequest request, CancellationToken cancellationToken)
         {
@@ -66,24 +51,22 @@ namespace ServiceAuth.WebApi.Controllers
                 (request.AccountId, request.OldPassword, request.NewPassword, cancellationToken);
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InvalidPasswordException))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AccountNotFoundException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("[action]")]
         public async Task ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
         {
             await _authService.ResetPasswordAsync(request.Email, request.NewPassword, cancellationToken);
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(InvalidPasswordException))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AccountNotFoundException))]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("[action]")]
         public async Task<bool> IsRegisterUserAsync([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
         {
             return await _authService.IsRegisterUserAsync(request.Email, cancellationToken);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<bool> IsTheSameUserPasswordAsync([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
+        {
+            return await _authService.IsTheSameUserPasswordAsync(request.Email, request.NewPassword, cancellationToken);
         }
     }
 }
