@@ -59,7 +59,7 @@ namespace ServiceAuth.WebApi.Controllers
         {
             var account = _mapper.Map<Account>(request);
             var response = await _authService.LoginByPassword(account, cancellationToken);
-            var token = _tokenService.GenerateToken(account);
+            var token = _tokenService.GenerateToken(response);
             return new LoginResponse(response.Id, response.Email.ToString(), token);
         }
 

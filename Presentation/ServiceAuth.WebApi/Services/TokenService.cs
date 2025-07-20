@@ -15,7 +15,6 @@ namespace ServiceAuth.WebApi.Services
         }
         public string GenerateToken(Account account)
         {
-            ArgumentNullException.ThrowIfNull(account);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = CreateClaimsIdentity(account),
@@ -36,8 +35,8 @@ namespace ServiceAuth.WebApi.Services
         {
             var claimsIdentity = new ClaimsIdentity(new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
-            new Claim(ClaimTypes.Email, account.Email.Value)
+                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+                new Claim(ClaimTypes.Email, account.Email.Value)
         });
             return claimsIdentity;
         }
