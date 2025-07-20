@@ -1,18 +1,31 @@
 ﻿using AutoMapper;
+using Service_Auth.Entities;
 using ServiceAuth.Domain.Entities;
+using ServiceAuth.WebApi.Models.Requests;
 using ServiceAuth.WebApi.Models.Responses;
-using ServiceAuth.WebApi.Services;
 
 namespace ServiceAuth.WebApi.Mappings
 {
     public class AccountProfile : Profile
     {
-        public AccountProfile(ITokenService tokenService)
+        public AccountProfile()
         {
-            CreateMap<Account, LoginResponse>()
-                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => tokenService.GenerateToken(src)))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            CreateMap<Account, RegisterResponse>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.ToString()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<RegisterRequest, Account >()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => new Email(src.Email)))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
+
+            CreateMap<LoginRequest, Account>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => new Email(src.Email)))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
+
+            CreateMap<ResetPasswordRequest, Account>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => new Email(src.Email)))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.NewPassword));
         }
     }
 }

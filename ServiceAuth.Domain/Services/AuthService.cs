@@ -1,5 +1,4 @@
-﻿using Service_Auth.Entities;
-using ServiceAuth.Domain.Entities;
+﻿using ServiceAuth.Domain.Entities;
 using ServiceAuth.Domain.Exceptions;
 using ServiceAuth.Domain.Interfaces;
 
@@ -21,38 +20,26 @@ namespace ServiceAuth.Domain.Services
         }
 
         public async Task<Account> Register
-            (string email, string password, CancellationToken cancellationToken)
-        {
-            //Транзакция
-            ArgumentException.ThrowIfNullOrEmpty(nameof(email));
-            ArgumentException.ThrowIfNullOrEmpty(nameof(password));
-
-            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+            (Account account, CancellationToken cancellationToken)
+        {          
+            var existedAccount = await _accountRepository
+                .FindAccountByEmail(account.Email.ToString(), cancellationToken);
             if (existedAccount is not null)
             {
                 throw new EmailAlreadyExistsException("Aккаунт с таким email уже существует.");
             }
-            var account = new Account(Guid.NewGuid(), new Email(email), EncryptPassword(password));
-            await _accountRepository.Add(account, cancellationToken);        
-            
-            //TODO: добавить в claims дополнительные данные
+
+            account.Password = EncryptPassword(account.Password);
+            await _accountRepository.Add(account, cancellationToken);
             return account;
         }
 
-        public async Task<Account> LoginByPassword(string email, string password, CancellationToken cancellationToken)
+        public async Task<Account> LoginByPassword(Account account, CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(email));
-            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(password));
+            var existedAccount = await GetAccountByEmailOrThrowAsync(account.Email.ToString(), cancellationToken);
 
-            var account = await _accountRepository.FindAccountByEmail(email, cancellationToken);
-            if (account is null)
-            {
-                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
-            }
-
-            var isPasswordValid =
-                _passwordHasher.VerifyHashedPassword
-                (account.HashedPassword, password, out bool rehash);
+            var isPasswordValid = VerifyPassword
+                (existedAccount.Password, account.Password, out bool rehash);
 
             if (!isPasswordValid)
             {
@@ -61,126 +48,103 @@ namespace ServiceAuth.Domain.Services
 
             if (rehash)
             {
-                await RehashPassword(password, account, cancellationToken);
+                await RehashPassword(account.Password, existedAccount, cancellationToken);
             }
 
-            return account;
+            return existedAccount;
         }
 
-        public async Task DeleteAccountAsync(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteAccountAsync
+            (Guid id, CancellationToken cancellationToken)
         {
-            //Транзакция
-            var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken);
-            if (existedAccount is null)
+            var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken)
+                ?? throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
+            await _accountRepository.Delete(existedAccount, cancellationToken);
+        }
+
+        public async Task ResetPasswordAsync
+            (Account account, CancellationToken cancellationToken)
+        {
+            var existedAccount = await GetAccountByEmailOrThrowAsync(account.Email.ToString(), cancellationToken);
+
+            var isPasswordValid = VerifyPassword
+                (existedAccount.Password, account.Password, out bool rehash);
+
+            if (isPasswordValid)
             {
-                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
+                throw new PasswordNotChangedException("Новый пароль не должен совпадать со старым.");
             }
-            await _accountRepository.Delete(existedAccount, cancellationToken);         
+
+            existedAccount.Password = EncryptPassword(account.Password);
+            await _accountRepository.Update(existedAccount, cancellationToken);
         }
 
-        public async Task UpdatePasswordAsync(Guid id, string oldPassword, string newPassword, CancellationToken cancellationToken)
+        public async Task UpdatePasswordAsync
+            (Guid id, string oldPassword, string newPassword, CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(oldPassword);
-            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
-
             if (oldPassword == newPassword)
             {
                 throw new PasswordNotChangedException("Новый пароль не должен совпадать со старым.");
             }
 
-            var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken);
+            var existedAccount = await _accountRepository.FindAccountById(id, cancellationToken)
+                ?? throw new AccountNotFoundException("Аккаунт с таким идентификатором не найден.");
 
-            if (existedAccount is null)
-            {
-                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
-            }
-
-            var isPasswordValid =
-                _passwordHasher.VerifyHashedPassword
-                (existedAccount.HashedPassword, oldPassword, out bool rehash);
+            var isPasswordValid = VerifyPassword
+                         (existedAccount.Password, oldPassword, out bool rehash);
 
             if (!isPasswordValid)
             {
                 throw new InvalidPasswordException("Старый пароль указан неверно.");
             }
 
-            existedAccount.HashedPassword = _passwordHasher.HashPassword(newPassword);
+            existedAccount.Password = _passwordHasher.HashPassword(newPassword);
             await _accountRepository.Update(existedAccount, cancellationToken);
         }
 
-        public async Task ResetPasswordAsync(string email, string newPassword, CancellationToken cancellationToken)
+        public async Task<bool> IsTheSameUserPasswordAsync
+            (Account account, CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
-            ArgumentException.ThrowIfNullOrWhiteSpace(email);
-
-            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
-
-            if (existedAccount is null)
-            {
-                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
-            }
-
-            var isPasswordValid =
-                _passwordHasher.VerifyHashedPassword
-                (existedAccount.HashedPassword, newPassword, out bool rehash);
-
-            if (isPasswordValid)
-            {
-                throw new PasswordNotChangedException("Новый пароль не должен совпадать со старым.");
-            }
-
-            existedAccount.HashedPassword = _passwordHasher.HashPassword(newPassword);
-            await _accountRepository.Update(existedAccount, cancellationToken);
+            return await IsTheSamePassword(account, cancellationToken);
         }
 
-        public async Task<bool> IsRegisterUserAsync(string email, CancellationToken cancellationToken)
-        { 
-            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        public async Task<bool> IsRegisterUserAsync
+            (string email, CancellationToken cancellationToken)
+        {
             return await _accountRepository.IsRegisterUserAsync(email, cancellationToken);
         }
 
-        public async Task<bool> IsTheSameUserPasswordAsync(string email, string newPassword, CancellationToken cancellationToken)
+        private async Task<Account> GetAccountByEmailOrThrowAsync
+            (string email, CancellationToken cancellationToken)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
-            ArgumentException.ThrowIfNullOrWhiteSpace(email);
-
-            var isPasswordValid = await IsTheSamePassword(email, newPassword, cancellationToken);
-
-            if (isPasswordValid)
-            {
-                return true;
-            }
-
-            return false;
+            return await _accountRepository.FindAccountByEmail(email, cancellationToken)
+                ?? throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
         }
 
-        private async Task<bool> IsTheSamePassword(string email, string newPassword, CancellationToken cancellationToken)
+        private async Task<bool> IsTheSamePassword
+            (Account account, CancellationToken cancellationToken)
         {
-            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+            var existedAccount = await GetAccountByEmailOrThrowAsync(account.Email.ToString(), cancellationToken);
 
-            if (existedAccount is null)
-            {
-                throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
-            }
-
-            var isPasswordValid =
-                _passwordHasher.VerifyHashedPassword
-                (existedAccount.HashedPassword, newPassword, out bool rehash);
+            var isPasswordValid = VerifyPassword
+                         (existedAccount.Password, account.Password, out bool rehash);
             return isPasswordValid;
         }
 
-        private async Task RehashPassword(string password, Account account, CancellationToken cancellationToken)
+        private async Task RehashPassword
+            (string password, Account account, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(nameof(account));
-            ArgumentException.ThrowIfNullOrEmpty(nameof(password));
-            account.HashedPassword = EncryptPassword(password);
+            account.Password = EncryptPassword(password);
             await _accountRepository.Update(account, cancellationToken);
         }
 
         private string EncryptPassword(string password)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(password));
             return _passwordHasher.HashPassword(password);
+        }
+        private bool VerifyPassword(string hashedPassword, string plainPassword, out bool needsRehash)
+        {
+            return _passwordHasher.VerifyHashedPassword(hashedPassword, plainPassword, out needsRehash);
         }
     }
 }

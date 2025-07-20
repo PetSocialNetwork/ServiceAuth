@@ -15,7 +15,7 @@ namespace ServiceAuth.WebApi.Services
         }
         public string GenerateToken(Account account)
         {
-            if (account == null) throw new ArgumentNullException(nameof(account));
+            ArgumentNullException.ThrowIfNull(account);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = CreateClaimsIdentity(account),

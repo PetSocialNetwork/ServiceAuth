@@ -7,19 +7,19 @@ namespace ServiceAuth.Domain.Entities
     {
         private Guid _id;
         private Email _email;
-        private string _hashedPassword;
+        private string _password;
 
         protected Account() { }
-        public Account(Guid id, Email email, string hashedPassword)
+        public Account(Guid id, Email email, string password)
         {
             ArgumentNullException.ThrowIfNull(email);
-            if (string.IsNullOrWhiteSpace(hashedPassword))
+            if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentNullException(nameof(hashedPassword));
+                throw new ArgumentNullException(nameof(password));
             }
             _id = id;
             _email = email;
-            _hashedPassword = hashedPassword;
+            _password = password;
         }
 
         public Guid Id
@@ -47,11 +47,11 @@ namespace ServiceAuth.Domain.Entities
             }
         }
 
-        public string HashedPassword
+        public string Password
         {
             get
             {
-                return _hashedPassword;
+                return _password;
             }
             set
             {
@@ -59,7 +59,7 @@ namespace ServiceAuth.Domain.Entities
                 {
                     throw new ArgumentNullException(nameof(value));
                 }
-                _hashedPassword = value;
+                _password = value;
             }
         }
     }
