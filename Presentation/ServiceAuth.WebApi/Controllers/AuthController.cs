@@ -32,7 +32,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Регистрация
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -50,7 +50,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Вход по паролю
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -67,7 +67,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Обновляет пароль
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         [HttpPut("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -82,7 +82,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Сбрасывает пароль
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         [HttpPut("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -97,7 +97,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Проверяет, зарегистрирован ли пользователь
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отменыы</param>
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
@@ -110,7 +110,7 @@ namespace ServiceAuth.WebApi.Controllers
         /// Проверяет, является ли пароль тем же самым
         /// </summary>
         /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Идентификатор отмены</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
