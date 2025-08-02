@@ -18,8 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\ServiceAuth.DataEntityFramework\ServiceAuth.DataEntityFramework.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ServiceAuth.IdentityPasswordHasherLib\ServiceAuth.IdentityPasswordHasherLib.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ServiceAuth.NswagClients\ServiceAuth.NswagClients.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ServiceAuth.Services\ServiceAuth.Services.csproj" />
     <ProjectReference Include="..\..\ServiceAuth.Domain\ServiceAuth.Domain.csproj" />
   </ItemGroup>
 
