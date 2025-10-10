@@ -9,6 +9,7 @@ using ServiceAuth.IdentityPasswordHasherLib;
 using ServiceAuth.WebApi.Services;
 using FluentValidation;
 using ServiceAuth.WebApi.Filters;
+using FluentValidation.AspNetCore;
 
 namespace ServiceAuth.WebApi.Extensions
 {
@@ -46,13 +47,14 @@ namespace ServiceAuth.WebApi.Extensions
 
         private static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddCors();
             services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Scoped);
             services.AddControllers(options =>
             {
                 options.Filters.Add<CentralizedExceptionHandlingFilter>();
             });
 
+            services.AddFluentValidationAutoValidation();
+            services.AddCors();
             services.AddEndpointsApiExplorer();
 
             services.AddSwaggerGen(options =>
