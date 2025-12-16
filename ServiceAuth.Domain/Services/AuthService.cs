@@ -113,6 +113,12 @@ namespace ServiceAuth.Domain.Services
         {
             return await _accountRepository.IsRegisterUserAsync(email, cancellationToken);
         }
+        public async Task<Account> GetAccountByIdAsync
+            (Guid id, CancellationToken cancellationToken)
+        {
+            return await _accountRepository.FindAccountById(id, cancellationToken)
+                ?? throw new AccountNotFoundException("Аккаунт с таким e-mail не найден.");
+        }
 
         private async Task<Account> GetAccountByEmailOrThrowAsync
             (string email, CancellationToken cancellationToken)

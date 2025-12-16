@@ -20,11 +20,11 @@ namespace ServiceAuth.WebApi.Controllers
             ITokenService tokenService,
             IMapper mapper)
         {
-            _authService = authService 
+            _authService = authService
                 ?? throw new ArgumentNullException(nameof(authService));
-            _tokenService = tokenService 
+            _tokenService = tokenService
                 ?? throw new ArgumentNullException(nameof(tokenService));
-            _mapper = mapper 
+            _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -38,7 +38,7 @@ namespace ServiceAuth.WebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<ActionResult<RegisterResponse>> Register
-            ([FromBody] RegisterRequest request, 
+            ([FromBody] RegisterRequest request,
               CancellationToken cancellationToken)
         {
             var account = _mapper.Map<Account>(request);
@@ -132,6 +132,21 @@ namespace ServiceAuth.WebApi.Controllers
         public async Task DeleteAccount([FromQuery] Guid id, CancellationToken cancellationToken)
         {
             await _authService.DeleteAccountAsync(id, cancellationToken);
+        }
+
+        /// <summary>
+        /// Возвращает аккаунт по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор аккаунта</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<RegisterResponse> GetAccountById([FromQuery] Guid id, CancellationToken cancellationToken)
+        {
+            var account = await _authService.GetAccountByIdAsync(id, cancellationToken);
+            return _mapper.Map<RegisterResponse>(account);
         }
     }
 }
